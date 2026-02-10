@@ -22,7 +22,7 @@ const WhatToExpectSection = () => {
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
           <div className="order-2 md:order-1 animate-fade-in">
             <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-4 md:mb-6">
-              Premium <span className="text-primary">Serviced Lands</span>
+              Premium Serviced <span className="text-primary">Farm Lands</span>
             </h2>
             <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
               Every Ibac Farm Estate comes fully equipped with world-class infrastructure and services
@@ -46,7 +46,7 @@ const WhatToExpectSection = () => {
                 className="rounded-2xl shadow-2xl w-full"
               />
             </div>
-            <div className="absolute -bottom-6 -right-6 w-48 h-48 z-20">
+            <div className="absolute -bottom-3 md:-bottom-6 -right-3 md:-right-6 w-24 md:w-48 h-24 md:h-48 z-20">
               <img
                 src={expectSmall}
                 alt="Fresh harvest"

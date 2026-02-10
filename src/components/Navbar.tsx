@@ -3,11 +3,9 @@ import { Menu } from "lucide-react";
 import { useState, useEffect } from "react";
 import Logo from "@/assets/logoremoved.png"; // ✅ your logo image
 
-interface NavbarProps {
-  onPreOrderClick: () => void;
-}
+const GOOGLE_FORM_URL = "https://forms.gle/5dj4p7nrW4VxCRfn9";
 
-const Navbar = ({ onPreOrderClick }: NavbarProps) => {
+const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -40,7 +38,7 @@ const Navbar = ({ onPreOrderClick }: NavbarProps) => {
 
         {/* Desktop Button */}
         <div className="hidden md:block">
-          <Button variant="hero" size="lg" onClick={onPreOrderClick}>
+          <Button variant="hero" size="lg" onClick={() => window.open(GOOGLE_FORM_URL, "_blank")}>
             Pre-Order Now
           </Button>
         </div>
@@ -61,7 +59,7 @@ const Navbar = ({ onPreOrderClick }: NavbarProps) => {
             variant="hero"
             size="lg"
             className="w-full"
-            onClick={onPreOrderClick}
+            onClick={() => window.open(GOOGLE_FORM_URL, "_blank")}
           >
             Pre-Order Now
           </Button>

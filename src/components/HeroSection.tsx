@@ -6,36 +6,37 @@ import hero3 from "@/assets/hero-3.jpg";
 const heroImages = [hero1, hero2, hero3];
 
 const HeroSection = () => {
+  const calculateTimeLeft = () => {
+  const targetDate = new Date("2026-03-25T00:00:00"); // Countdown ends December 3, 2025
+  const now = new Date();
+  const difference = targetDate.getTime() - now.getTime(); // ✅ Fix: use .getTime()
+
+  if (difference <= 0) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
+
+  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((difference / (1000 * 60)) % 60);
+  const seconds = Math.floor((difference / 1000) % 60);
+
+  return { days, hours, minutes, seconds };
+};
+
+
   const [currentImage, setCurrentImage] = useState(0);
-  const [timeLeft, setTimeLeft] = useState({
-    days: 56,
-    hours: 12,
-    minutes: 30,
-    seconds: 0,
-  });
+  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % heroImages.length);
     }, 5000);
-
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: prev.minutes - 1, seconds: 59 };
-        } else if (prev.hours > 0) {
-          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        } else if (prev.days > 0) {
-          return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
-        }
-        return prev;
-      });
+      setTimeLeft(calculateTimeLeft());
     }, 1000);
 
     return () => clearInterval(timer);
@@ -71,7 +72,9 @@ const HeroSection = () => {
           </p>
 
           <div className="inline-block bg-white/10 backdrop-blur-md border border-white/20 rounded-xl md:rounded-2xl p-4 md:p-6">
-            <p className="text-white text-base md:text-lg mb-3 md:mb-4 font-medium">Coming Soon</p>
+            <p className="text-white text-base md:text-lg mb-3 md:mb-4 font-medium">
+              Coming Soon
+            </p>
             <div className="grid grid-cols-4 gap-2 md:gap-4">
               {[
                 { value: timeLeft.days, label: "Days" },

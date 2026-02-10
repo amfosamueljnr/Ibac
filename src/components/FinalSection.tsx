@@ -2,11 +2,9 @@ import { Button } from "@/components/ui/button";
 import finalMain from "@/assets/final-main.jpg";
 import finalSmall from "@/assets/final-small.jpg";
 
-interface FinalSectionProps {
-  onPreOrderClick: () => void;
-}
+const GOOGLE_FORM_URL = "https://forms.gle/5dj4p7nrW4VxCRfn9";
 
-const FinalSection = ({ onPreOrderClick }: FinalSectionProps) => {
+const FinalSection = () => {
   return (
     <section className="py-12 md:py-20 px-4 bg-gradient-to-br from-background via-primary-light to-background">
       <div className="container mx-auto max-w-6xl">
@@ -17,13 +15,13 @@ const FinalSection = ({ onPreOrderClick }: FinalSectionProps) => {
             </h2>
             <p className="text-sm md:text-base text-muted-foreground mb-4 md:mb-6">
               Don't miss this opportunity to own a professionally managed farm estate. Secure your spot
-              today with just GHS 10,000 reservation fee.
+              today with just GHS 5,000 reservation fee.
             </p>
             <p className="text-sm md:text-base text-muted-foreground mb-6 md:mb-8">
               Whether you choose crops or livestock, your investment is backed by expert management,
               modern infrastructure, and proven agricultural practices.
             </p>
-            <Button variant="hero" size="lg" onClick={onPreOrderClick}>
+            <Button variant="hero" size="lg" onClick={() => window.open(GOOGLE_FORM_URL, "_blank")}>
               Reserve Your Farm Today
             </Button>
           </div>
@@ -36,7 +34,7 @@ const FinalSection = ({ onPreOrderClick }: FinalSectionProps) => {
                 className="rounded-2xl shadow-2xl w-full"
               />
             </div>
-            <div className="absolute -bottom-6 -right-6 w-48 h-48 z-20">
+            <div className="absolute -bottom-3 md:-bottom-6 -right-3 md:-right-6 w-24 md:w-48 h-24 md:h-48 z-20">
               <img
                 src={finalSmall}
                 alt="Fresh farm produce"

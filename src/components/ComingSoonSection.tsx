@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 const ComingSoonSection = () => {
   return (
     <section className="py-12 md:py-20 px-4 bg-gradient-to-br from-primary-light via-secondary to-background">
@@ -11,11 +13,18 @@ const ComingSoonSection = () => {
             and animals. You invest, and our professional management team handles the day-to-day—from
             cultivation to harvest, from feeding to sales.
           </p>
-          <div className="mt-6 md:mt-8 inline-block bg-primary/10 border-2 border-primary/30 rounded-xl px-6 md:px-8 py-3 md:py-4">
-            <p className="text-primary font-semibold text-sm md:text-base">
-              🌱 Your Farm. Your Future. Zero Manual Work.
-            </p>
-          </div>
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="mt-6 md:mt-8 bg-primary/10 border-2 border-primary/30 hover:bg-primary/20 hover:border-primary/50"
+          >
+            <a href="/IBAC-FARM.pdf" target="_blank" rel="noopener noreferrer">
+              <span className="text-primary font-semibold text-sm md:text-base">
+                🌱 Learn more about our farm estates.
+              </span>
+            </a>
+          </Button>
         </div>
       </div>
     </section>

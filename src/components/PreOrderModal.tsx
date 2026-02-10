@@ -5,17 +5,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { CreditCard, Smartphone, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
 
 interface PreOrderModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
+const GOOGLE_SHEET_WEBHOOK_URL = import.meta.env.VITE_GOOGLE_SHEET_WEBHOOK_URL || "";
+
 const PreOrderModal = ({ isOpen, onClose }: PreOrderModalProps) => {
   const [step, setStep] = useState(1);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [showPaymentMethod, setShowPaymentMethod] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -27,76 +29,139 @@ const PreOrderModal = ({ isOpen, onClose }: PreOrderModalProps) => {
     country: "",
     idType: "",
     nextOfKin: "",
-    paymentMethod: "",
   });
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const validateStep1 = (): boolean => {
+    if (!formData.fullName?.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter your full name",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!formData.email?.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!formData.phone?.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter your phone number",
+        variant: "destructive",
+      });
+      return false;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Invalid Email",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
+  const validateStep2 = (): boolean => {
+    if (!formData.address?.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter your address",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!formData.city?.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter your city",
+        variant: "destructive",
+      });
+      return false;
+    }
+    if (!formData.country?.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please select your country",
+        variant: "destructive",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleNext = () => {
     if (step === 1) {
-      if (!formData.fullName || !formData.email || !formData.phone) {
-        toast({
-          title: "Missing Information",
-          description: "Please fill in all required fields",
-          variant: "destructive",
-        });
-        return;
-      }
+      if (!validateStep1()) return;
       setStep(2);
     } else if (step === 2) {
-      if (!formData.address || !formData.city || !formData.country) {
-        toast({
-          title: "Missing Information",
-          description: "Please fill in all required fields",
-          variant: "destructive",
-        });
-        return;
-      }
-      setStep(3);
+      if (!validateStep2()) return;
+      handleSubmit();
     }
   };
 
-  const handlePaymentSelect = async (method: string) => {
-    const finalFormData = { ...formData, paymentMethod: method };
-    setFormData(finalFormData);
-    setShowPaymentMethod(true);
-    
-    try {
-      // Save to backend
-      const response = await fetch(
-        `https://sxpsqpojegxrnmqevhmq.supabase.co/functions/v1/save-preorder`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(finalFormData),
-        }
-      );
-
-      const result = await response.json();
-      
-      if (result.success) {
-        console.log('Pre-order saved successfully');
-      } else {
-        console.error('Failed to save pre-order:', result.error);
-      }
-    } catch (error) {
-      console.error('Error submitting pre-order:', error);
+  const handleSubmit = async () => {
+    if (!GOOGLE_SHEET_WEBHOOK_URL) {
+      toast({
+        title: "Configuration Error",
+        description: "Google Sheet webhook URL is not configured. Please add VITE_GOOGLE_SHEET_WEBHOOK_URL to your .env file.",
+        variant: "destructive",
+      });
+      return;
     }
 
-    setTimeout(() => {
-      setShowPaymentMethod(false);
+    setIsSubmitting(true);
+
+    const payload = {
+      ...formData,
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      const response = await fetch(GOOGLE_SHEET_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `HTTP ${response.status}`);
+      }
+
       setShowSuccess(true);
-    }, 2000);
+      toast({
+        title: "Preorder Submitted",
+        description: "Thank you! Your preorder has been received successfully.",
+      });
+    } catch (error) {
+      console.error("Error submitting preorder:", error);
+      toast({
+        title: "Submission Failed",
+        description:
+          error instanceof Error ? error.message : "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
     setStep(1);
     setShowSuccess(false);
-    setShowPaymentMethod(false);
     setFormData({
       fullName: "",
       email: "",
@@ -106,7 +171,6 @@ const PreOrderModal = ({ isOpen, onClose }: PreOrderModalProps) => {
       country: "",
       idType: "",
       nextOfKin: "",
-      paymentMethod: "",
     });
     onClose();
   };
@@ -121,27 +185,11 @@ const PreOrderModal = ({ isOpen, onClose }: PreOrderModalProps) => {
             </div>
             <DialogTitle className="text-2xl mb-4">Thank You!</DialogTitle>
             <DialogDescription className="text-lg">
-              Your reservation has been received — your journey with Ibac Farm Estates starts here.
+              Your preorder has been received — your journey with Ibac Farm Estates starts here.
             </DialogDescription>
             <Button variant="hero" size="lg" className="mt-6" onClick={handleClose}>
               Close
             </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  if (showPaymentMethod) {
-    return (
-      <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
-          <div className="text-center py-8">
-            <div className="animate-spin w-16 h-16 border-4 border-primary border-t-transparent rounded-full mx-auto mb-6"></div>
-            <DialogTitle className="text-xl">Processing Payment...</DialogTitle>
-            <DialogDescription>
-              {formData.paymentMethod === "card" ? "Redirecting to secure payment gateway..." : "Initializing Mobile Money payment..."}
-            </DialogDescription>
           </div>
         </DialogContent>
       </Dialog>
@@ -154,7 +202,7 @@ const PreOrderModal = ({ isOpen, onClose }: PreOrderModalProps) => {
         <DialogHeader>
           <DialogTitle className="text-2xl">Pre-Order Your Farm Estate</DialogTitle>
           <DialogDescription>
-            Step {step} of 3 - {step === 1 ? "Personal Information" : step === 2 ? "Location & ID" : "Payment Method"}
+            Step {step} of 2 - {step === 1 ? "Personal Information" : "Location & ID"}
           </DialogDescription>
         </DialogHeader>
 
@@ -235,7 +283,7 @@ const PreOrderModal = ({ isOpen, onClose }: PreOrderModalProps) => {
                     <SelectValue placeholder="Select ID type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ghana-card">Ghana Card</SelectItem>
+                    <SelectItem value="ghana-card">National ID</SelectItem>
                     <SelectItem value="drivers-license">Driver's License</SelectItem>
                     <SelectItem value="passport">Passport</SelectItem>
                   </SelectContent>
@@ -252,46 +300,32 @@ const PreOrderModal = ({ isOpen, onClose }: PreOrderModalProps) => {
               </div>
             </>
           )}
-
-          {step === 3 && (
-            <div className="space-y-4">
-              <p className="text-muted-foreground">
-                Select your preferred payment method to complete your GHS 10,000 reservation:
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button
-                  onClick={() => handlePaymentSelect("card")}
-                  className="p-6 border-2 border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all text-left"
-                >
-                  <CreditCard className="w-8 h-8 text-primary mb-3" />
-                  <h3 className="font-semibold text-lg mb-1">Credit Card</h3>
-                  <p className="text-sm text-muted-foreground">Pay securely with your credit card</p>
-                </button>
-                <button
-                  onClick={() => handlePaymentSelect("mobile")}
-                  className="p-6 border-2 border-border rounded-lg hover:border-primary hover:bg-primary/5 transition-all text-left"
-                >
-                  <Smartphone className="w-8 h-8 text-primary mb-3" />
-                  <h3 className="font-semibold text-lg mb-1">Mobile Money</h3>
-                  <p className="text-sm text-muted-foreground">Pay with MTN, Vodafone, or AirtelTigo</p>
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
-        {step < 3 && (
-          <div className="flex justify-between gap-4">
-            {step > 1 && (
-              <Button variant="outline" onClick={() => setStep(step - 1)}>
-                Back
-              </Button>
-            )}
-            <Button variant="hero" onClick={handleNext} className="ml-auto">
-              {step === 2 ? "Continue to Payment" : "Next"}
+        <div className="flex justify-between gap-4">
+          {step > 1 && (
+            <Button variant="outline" onClick={() => setStep(step - 1)} disabled={isSubmitting}>
+              Back
             </Button>
-          </div>
-        )}
+          )}
+          <Button
+            variant="hero"
+            onClick={handleNext}
+            className="ml-auto"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Submitting...
+              </>
+            ) : step === 2 ? (
+              "Submit Preorder"
+            ) : (
+              "Next"
+            )}
+          </Button>
+        </div>
       </DialogContent>
     </Dialog>
   );

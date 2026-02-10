@@ -30,7 +30,7 @@ first of its kind anywhere!
                 className="rounded-2xl shadow-2xl w-full"
               />
             </div>
-            <div className="absolute -bottom-6 -left-6 w-48 h-48 z-20">
+            <div className="absolute -bottom-3 md:-bottom-6 -left-3 md:-left-6 w-24 md:w-48 h-24 md:h-48 z-20">
               <img
                 src={aboutSmall}
                 alt="Farmers working together"

@@ -3,11 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-interface ProjectsSectionProps {
-  onPreOrderClick: () => void;
-}
+const GOOGLE_FORM_URL = "https://forms.gle/5dj4p7nrW4VxCRfn9";
 
-const ProjectsSection = ({ onPreOrderClick }: ProjectsSectionProps) => {
+const ProjectsSection = () => {
   return (
     <section className="py-12 md:py-20 px-4 bg-background">
       <div className="container mx-auto max-w-6xl">
@@ -63,7 +61,7 @@ const ProjectsSection = ({ onPreOrderClick }: ProjectsSectionProps) => {
 
                 <div className="bg-secondary/50 rounded-lg p-4 md:p-6 space-y-2">
                   <p className="text-sm md:text-base text-foreground">
-                    <span className="font-semibold">Reservation Slot:</span> GHS 10,000
+                    <span className="font-semibold">Reservation Slot:</span> GHS 5,000
                   </p>
                   <p className="text-sm md:text-base text-foreground">
                     <span className="font-semibold">Minimum Lease Period:</span> 5 years
@@ -74,7 +72,7 @@ const ProjectsSection = ({ onPreOrderClick }: ProjectsSectionProps) => {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="hero" size="lg" className="w-full" onClick={onPreOrderClick}>
+                <Button variant="hero" size="lg" className="w-full" onClick={() => window.open(GOOGLE_FORM_URL, "_blank")}>
                   Pre-Order Now
                 </Button>
               </CardFooter>
@@ -132,7 +130,7 @@ const ProjectsSection = ({ onPreOrderClick }: ProjectsSectionProps) => {
 
                 <div className="bg-secondary/50 rounded-lg p-4 md:p-6 space-y-2">
                   <p className="text-sm md:text-base text-foreground">
-                    <span className="font-semibold">Reservation Slot:</span> GHS 10,000
+                    <span className="font-semibold">Reservation Slot:</span> GHS 5,000
                   </p>
                   <p className="text-sm md:text-base text-foreground">
                     <span className="font-semibold">Minimum Lease Period:</span> 5 years
@@ -143,7 +141,7 @@ const ProjectsSection = ({ onPreOrderClick }: ProjectsSectionProps) => {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button variant="hero" size="lg" className="w-full" onClick={onPreOrderClick}>
+                <Button variant="hero" size="lg" className="w-full" onClick={() => window.open(GOOGLE_FORM_URL, "_blank")}>
                   Pre-Order Now
                 </Button>
               </CardFooter>

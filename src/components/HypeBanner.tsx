@@ -20,13 +20,13 @@ const HypeBanner = () => {
             </div>
           </div>
 
-          <div className="flex justify-center md:justify-end animate-scale-in">
+          <div className="hidden md:flex justify-center md:justify-end animate-scale-in">
             <div className="relative -mt-12 md:-mt-24">
               <div className="absolute inset-0 bg-white/20 rounded-full blur-3xl"></div>
               <img
                 src={farmerIpad}
                 alt="Farmer using digital farm management"
-                className="relative z-10 w-48 md:w-80 h-auto drop-shadow-2xl"
+                className="relative z-10 w-32 md:w-80 h-auto drop-shadow-2xl"
                 style={{
                   filter: 'drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3))'
                 }}

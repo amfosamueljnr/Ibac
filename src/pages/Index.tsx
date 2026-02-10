@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
@@ -9,15 +8,13 @@ import ProjectsSection from "@/components/ProjectsSection";
 import HypeBanner from "@/components/HypeBanner";
 import FinalSection from "@/components/FinalSection";
 import Footer from "@/components/Footer";
-import PreOrderModal from "@/components/PreOrderModal";
 import BackgroundPattern from "@/components/BackgroundPattern";
 
 const Index = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar onPreOrderClick={() => setIsModalOpen(true)} />
+      <Navbar />
       <HeroSection />
       <div className="relative">
         <BackgroundPattern />
@@ -32,14 +29,13 @@ const Index = () => {
         <BackgroundPattern />
         <WhyChooseSection />
       </div>
-      <ProjectsSection onPreOrderClick={() => setIsModalOpen(true)} />
+      <ProjectsSection />
       <HypeBanner />
       <div className="relative">
         <BackgroundPattern />
-        <FinalSection onPreOrderClick={() => setIsModalOpen(true)} />
+        <FinalSection />
       </div>
       <Footer />
-      <PreOrderModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };
